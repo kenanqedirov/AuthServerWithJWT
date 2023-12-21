@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Configuration
 {
-    internal class UserRefreshTokenConfiguration : IEntityTypeConfiguration<UserRefreshToken>
+    public class UserRefreshTokenConfiguration : IEntityTypeConfiguration<UserRefreshToken>
     {
         public void Configure(EntityTypeBuilder<UserRefreshToken> builder)
         {
             builder.HasKey(a => a.UserId);
             builder.Property(a=>a.Code).IsRequired().HasMaxLength(200);
-
         }
     }
 }
