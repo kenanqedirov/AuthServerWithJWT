@@ -38,7 +38,6 @@ namespace DataLayer.Repositories
                 _context.Entry(entity).State = EntityState.Detached;
             }
             return entity;
-
         }
 
         public void Remove(TEntity entity)

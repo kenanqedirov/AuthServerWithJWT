@@ -1,4 +1,5 @@
 ﻿using CoreLayer.Configuration;
+using CoreLayer.Dtos;
 using CoreLayer.Model;
 using CoreLayer.Repositories;
 using CoreLayer.Services;
@@ -35,12 +36,14 @@ namespace AuthServerWithJWT
         public void ConfigureServices(IServiceCollection services)
         {
             // DI Register
-            //services.AddScoped<IAuthenticationService, AuthenticationService>();
-            //services.AddScoped<IUserService, UserService>();
-            //services.AddScoped<ITokenService, TokenService>();
-            //services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            //services.AddScoped(typeof(IServiceGeneric<,>), typeof(GenericService<,>));
-            //services.AddScoped<IUnitOfWork, UnitofWork>();
+
+
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(IServiceGeneric<,>), typeof(GenericService<,>));
+            services.AddScoped<IUnitOfWork, UnitofWork>();
 
             services.AddDbContext<AppDbContext>(options =>
             {
@@ -85,7 +88,6 @@ namespace AuthServerWithJWT
                 };
             });
 
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -106,7 +108,7 @@ namespace AuthServerWithJWT
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

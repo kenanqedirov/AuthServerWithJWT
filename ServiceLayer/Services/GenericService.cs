@@ -16,7 +16,7 @@ namespace ServiceLayer.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IGenericRepository<TEntity> _genericRepository;
-        public GenericService(IUnitOfWork unitOfWork, CoreLayer.Repositories.IGenericRepository<TEntity> genericRepository)
+        public GenericService(IUnitOfWork unitOfWork, IGenericRepository<TEntity> genericRepository)
         {
             _unitOfWork = unitOfWork;
             _genericRepository = genericRepository;
