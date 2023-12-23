@@ -20,12 +20,18 @@ namespace ServiceLayer.Services
     {
         private readonly List<Client> _clients;
         private readonly ITokenService _tokenService;
-        private readonly UserManager<AppUser> _userManager;
+        private readonly UserManager<UserApp> _userManager;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IGenericRepository<UserRefreshToken> _userRefershTokenService;
+        private IOptions<List<Client>> options;
+
+        public AuthenticationService(IOptions<List<Client>> options)
+        {
+            this.options = options;
+        }
 
         public AuthenticationService(IOptions<List<Client>> clients, ITokenService tokenService,
-            UserManager<AppUser> userManager,
+            UserManager<UserApp> userManager,
             IUnitOfWork unitOfWork,
             IGenericRepository<UserRefreshToken> userRefershTokenService)
         {

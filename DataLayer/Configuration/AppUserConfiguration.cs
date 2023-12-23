@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Configuration
 {
-    public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
+    public class AppUserConfiguration : IEntityTypeConfiguration<UserApp>
     {
-        public void Configure(EntityTypeBuilder<AppUser> builder)
+        public void Configure(EntityTypeBuilder<UserApp> builder)
         {
+            builder.HasKey(x => x.Id);
             builder.Property(a=>a.City).HasMaxLength(50);
         }
     }

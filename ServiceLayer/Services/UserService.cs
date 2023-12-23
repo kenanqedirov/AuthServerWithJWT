@@ -13,19 +13,19 @@ namespace ServiceLayer.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly UserManager<UserApp> _userManager;
 
-        public UserService(UserManager<AppUser> userManager)
+        public UserService(UserManager<UserApp> userManager)
         {
             _userManager = userManager;
         }
 
         public async Task<Response<UserAppDto>> CreateUserAsync(CreateUserDto createUserDto)
         {
-            var user = new AppUser
+            var user = new UserApp
             {
                 Email = createUserDto.Email,
-                UserName = createUserDto.Username
+                UserName = createUserDto.Username,
             };
             var result = await _userManager.CreateAsync(user,createUserDto.Password);
             if (!result.Succeeded)

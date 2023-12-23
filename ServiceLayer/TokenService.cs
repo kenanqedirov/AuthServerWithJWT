@@ -18,10 +18,10 @@ namespace ServiceLayer
 {
     public class TokenService : ITokenService
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly UserManager<UserApp> _userManager;
         private readonly CustomTokenOption _tokenOption;
 
-        public TokenService(IOptions<CustomTokenOption> tokenOption, UserManager<AppUser> userManager)
+        public TokenService(IOptions<CustomTokenOption> tokenOption, UserManager<UserApp> userManager)
         {
             _tokenOption = tokenOption.Value;
             _userManager = userManager;
@@ -34,7 +34,7 @@ namespace ServiceLayer
             random.GetBytes(numberByte);
             return Convert.ToBase64String(numberByte);
         }
-        private IEnumerable<Claim> GetClaims(AppUser userApp , List<string> audience)
+        private IEnumerable<Claim> GetClaims(UserApp userApp , List<string> audience)
         {
             var userList = new List<Claim>
             {
@@ -56,7 +56,7 @@ namespace ServiceLayer
             return claims;
         }
 
-        public TokenDto CreateToken(AppUser userApp)
+        public TokenDto CreateToken(UserApp userApp)
         {
             var accessTokenExpiration = DateTime.Now.AddMinutes(_tokenOption.AccessTokenExpiration);
             var refreshTokenExpiration = DateTime.Now.AddMinutes(_tokenOption.RefreshTokenExpiration);

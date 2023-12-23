@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CoreLayer.Model
 {
-    public class AppUser : IdentityUser
+    public class UserApp : IdentityUser
     {
         public string City { get; set; }
     }

@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using ServiceLayer;
 using ServiceLayer.Services;
@@ -38,7 +39,13 @@ namespace AuthServerWithJWT
             // DI Register
 
 
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IAuthenticationService>(x=>
+            new AuthenticationService(x.GetRequiredService<IOptions<List<Client>>>(),
+            x.GetRequiredService<ITokenService>(),
+            x.GetRequiredService<UserManager<UserApp>>(),
+            x.GetRequiredService<IUnitOfWork>(),
+            x.GetRequiredService<IGenericRepository<UserRefreshToken>>()
+            ));
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -53,7 +60,7 @@ namespace AuthServerWithJWT
                 });
             });
 
-            services.AddIdentity<AppUser, IdentityRole>(opt =>
+            services.AddIdentity<UserApp, IdentityRole>(opt =>
             {
                 opt.User.RequireUniqueEmail = true;
                 opt.Password.RequireNonAlphanumeric = false;
