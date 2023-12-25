@@ -21,6 +21,10 @@ namespace DataLayer
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+            builder.Entity<IdentityUserLogin<string>>().HasNoKey();
+            builder.Entity<IdentityUserRole<string>>().HasNoKey();
+            builder.Entity<IdentityUserToken<string>>().HasNoKey();
         }
+        
     }
 }

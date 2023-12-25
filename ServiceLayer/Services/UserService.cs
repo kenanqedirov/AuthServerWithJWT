@@ -1,7 +1,9 @@
 ﻿using CoreLayer.Dtos;
 using CoreLayer.Model;
 using CoreLayer.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.Dto;
 using System;
 using System.Collections.Generic;
@@ -14,10 +16,11 @@ namespace ServiceLayer.Services
     public class UserService : IUserService
     {
         private readonly UserManager<UserApp> _userManager;
-
-        public UserService(UserManager<UserApp> userManager)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public UserService(UserManager<UserApp> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public async Task<Response<UserAppDto>> CreateUserAsync(CreateUserDto createUserDto)
@@ -34,6 +37,21 @@ namespace ServiceLayer.Services
                 return Response<UserAppDto>.Fail(new ErrorDto(errors, true),404,true);
             }
             return Response<UserAppDto>.Success(ObjectMapper.Mapper.Map<UserAppDto>(user),200);
+        }
+
+        public async Task<Response<NoContentResult>> CreateUserRoles(string userName )
+        {
+            if (!await _roleManager.RoleExistsAsync("Admin"))
+            {
+                await _roleManager.CreateAsync(new IdentityRole { Name = "Admin" });
+                await _roleManager.CreateAsync(new IdentityRole { Name = "Manager" });
+            }           
+            var user = await _userManager.FindByNameAsync(userName);
+
+            await _userManager.AddToRoleAsync(user, "Admin");
+            await _userManager.AddToRoleAsync(user, "Manager");
+
+            return Response<NoContentResult>.Success(StatusCodes.Status201Created);
         }
 
         public async Task<Response<UserAppDto>> GetUserByNameAsync(string userName)

@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServiceLayer.Services
+namespace SharedLibrary.Services
 {
-    public static class SignService
+    public class SignService
     {
         public static SecurityKey GetSymmetricSecurityKey(string securityKey)
         {
             return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
-        } 
+        }
     }
 }

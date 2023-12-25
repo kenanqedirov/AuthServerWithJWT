@@ -1,4 +1,5 @@
 ﻿using CoreLayer.Dtos;
+using Microsoft.AspNetCore.Mvc;
 using SharedLibrary.Dto;
 using System;
 using System.Collections.Generic;
@@ -12,5 +13,6 @@ namespace CoreLayer.Services
     {
         Task<Response<UserAppDto>> CreateUserAsync(CreateUserDto createUserDto);
         Task<Response<UserAppDto>> GetUserByNameAsync(string userName);
+        Task<Response<NoContentResult>> CreateUserRoles(string userName);
     }
 }

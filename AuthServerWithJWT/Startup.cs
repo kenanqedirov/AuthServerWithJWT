@@ -6,6 +6,7 @@ using CoreLayer.Services;
 using CoreLayer.UnitOfWork;
 using DataLayer;
 using DataLayer.Repositories;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,6 +20,8 @@ using Microsoft.OpenApi.Models;
 using ServiceLayer;
 using ServiceLayer.Services;
 using SharedLibrary.Configuration;
+using SharedLibrary.Extensions;
+using SharedLibrary.Services;
 using System;
 using System.Collections.Generic;
 
@@ -39,13 +42,14 @@ namespace AuthServerWithJWT
             // DI Register
 
 
-            services.AddScoped<IAuthenticationService>(x=>
+            services.AddScoped<IAuthenticationService>(x =>
             new AuthenticationService(x.GetRequiredService<IOptions<List<Client>>>(),
             x.GetRequiredService<ITokenService>(),
             x.GetRequiredService<UserManager<UserApp>>(),
             x.GetRequiredService<IUnitOfWork>(),
             x.GetRequiredService<IGenericRepository<UserRefreshToken>>()
             ));
+           // services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -95,7 +99,12 @@ namespace AuthServerWithJWT
                 };
             });
 
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation(opt =>
+            {
+                opt.RegisterValidatorsFromAssemblyContaining<Startup>();
+            });
+
+            services.UseCustomValidationResponse();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AuthServerWithJWT", Version = "v1" });
@@ -111,7 +120,10 @@ namespace AuthServerWithJWT
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthServerWithJWT v1"));
             }
-
+            else
+            {
+                app.UseCustomException();
+            }
             app.UseHttpsRedirection();
 
             app.UseRouting();

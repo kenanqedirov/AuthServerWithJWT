@@ -7,12 +7,14 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ServiceLayer.Services;
 using SharedLibrary.Configuration;
+using SharedLibrary.Services;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace ServiceLayer
 {
@@ -34,8 +36,9 @@ namespace ServiceLayer
             random.GetBytes(numberByte);
             return Convert.ToBase64String(numberByte);
         }
-        private IEnumerable<Claim> GetClaims(UserApp userApp , List<string> audience)
+        private async Task<IEnumerable<Claim>> GetClaims(UserApp userApp , List<string> audience)
         {
+            var roles =await _userManager.GetRolesAsync(userApp);
             var userList = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier , userApp.Id),
@@ -44,6 +47,7 @@ namespace ServiceLayer
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())   /// Spesifik ID vermek
             };
             userList.AddRange(audience.Select(a => new Claim(JwtRegisteredClaimNames.Aud, a)));
+            userList.AddRange(roles.Select(a=>new Claim(ClaimTypes.Role, a)));
             return userList;
         }
 
@@ -67,7 +71,7 @@ namespace ServiceLayer
                 issuer:_tokenOption.Issuer,
                 expires:accessTokenExpiration,
                 notBefore:DateTime.Now,
-                claims:GetClaims(userApp,_tokenOption.Audience),
+                claims:GetClaims(userApp,_tokenOption.Audience).Result,
                 signingCredentials:signingCredentials
                 );
 
